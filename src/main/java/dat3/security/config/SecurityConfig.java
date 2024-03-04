@@ -75,6 +75,20 @@ public class SecurityConfig {
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/v3/api-docs/**"))
                 .permitAll()
 
+                // Endpoint permissions
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/categories"))
+                .permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/recipes"))
+                .permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/recipes/{id}"))
+                .permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/recipes"))
+                .hasAuthority("USER")
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.PUT, "/recipes/{id}"))
+                .hasAuthority("USER")
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.DELETE, "/recipes/{id}"))
+                .hasAuthority("USER")
+
                 //Required for error responses
                 .requestMatchers(mvcMatcherBuilder.pattern("/error"))
                 .permitAll()
@@ -84,9 +98,10 @@ public class SecurityConfig {
                 //.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/test/admin-only")).hasAuthority("ADMIN")
 
                 //Use this to completely disable security (Will not work if endpoints has been marked with @PreAuthorize)
-                .requestMatchers(mvcMatcherBuilder.pattern("/**"))
-                .permitAll());
-//            .anyRequest().authenticated());
+//                .requestMatchers(mvcMatcherBuilder.pattern("/**"))
+//                .permitAll());
+                .anyRequest()
+                .authenticated());
 
         return http.build();
     }
