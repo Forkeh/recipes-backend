@@ -33,81 +33,92 @@ import javax.crypto.spec.SecretKeySpec;
 @Configuration
 public class SecurityConfig {
 
-  @Value("${app.secret-key}")
-  private String tokenSecret;
+    @Value("${app.secret-key}")
+    private String tokenSecret;
 
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-    MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
-    http
-            .cors(Customizer.withDefaults()) //Will use the CorsConfigurationSource bean declared in CorsConfig.java
-            .csrf(csrf -> csrf.disable())  //We can disable csrf, since we are using token based authentication, not cookie based
-            .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .oauth2ResourceServer((oauth2ResourceServer) ->
-                    oauth2ResourceServer
-                            .jwt((jwt) -> jwt.decoder(jwtDecoder())
-                                    .jwtAuthenticationConverter(authenticationConverter())
-                            )
-                            .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
-                            .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler()));
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
+        http
+                .cors(Customizer.withDefaults()) //Will use the CorsConfigurationSource bean declared in CorsConfig.java
+                .csrf(csrf -> csrf.disable())  //We can disable csrf, since we are using token based authentication, not cookie based
+                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2ResourceServer((oauth2ResourceServer) ->
+                        oauth2ResourceServer
+                                .jwt((jwt) -> jwt.decoder(jwtDecoder())
+                                        .jwtAuthenticationConverter(authenticationConverter())
+                                )
+                                .authenticationEntryPoint(new CustomOAuth2AuthenticationEntryPoint())
+                                .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler()));
 
-    http.authorizeHttpRequests((authorize) -> authorize
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/auth/login")).permitAll()
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/user-with-role")).permitAll() //Clients can create a user for themself
+        http.authorizeHttpRequests((authorize) -> authorize
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/auth/login"))
+                .permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/user-with-role"))
+                .permitAll() //Clients can create a user for themself
 
-            //This is for demo purposes only, and should be removed for a real system
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/demo/anonymous")).permitAll()
+                //This is for demo purposes only, and should be removed for a real system
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/demo/anonymous"))
+                .permitAll()
 
-            //Allow index.html for anonymous users
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/index.html")).permitAll()
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/")).permitAll()
+                //Allow index.html for anonymous users
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/index.html"))
+                .permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/"))
+                .permitAll()
 
-            //Allow for swagger-ui
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/swagger-ui/**")).permitAll()
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/swagger-resources/**")).permitAll()
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/v3/api-docs/**")).permitAll()
+                //Allow for swagger-ui
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/swagger-ui/**"))
+                .permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/swagger-resources/**"))
+                .permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/v3/api-docs/**"))
+                .permitAll()
 
-            //Required for error responses
-            .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
+                //Required for error responses
+                .requestMatchers(mvcMatcherBuilder.pattern("/error"))
+                .permitAll()
 
-            //This is for demo purposes only, and should be removed for a real system
-            //.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/test/user-only")).hasAuthority("USER")
-            //.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/test/admin-only")).hasAuthority("ADMIN")
+                //This is for demo purposes only, and should be removed for a real system
+                //.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/test/user-only")).hasAuthority("USER")
+                //.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/test/admin-only")).hasAuthority("ADMIN")
 
-            //Use this to completely disable security (Will not work if endpoints has been marked with @PreAuthorize)
-            //.requestMatchers(mvcMatcherBuilder.pattern("/**")).permitAll());
-            .anyRequest().authenticated());
+                //Use this to completely disable security (Will not work if endpoints has been marked with @PreAuthorize)
+                .requestMatchers(mvcMatcherBuilder.pattern("/**"))
+                .permitAll());
+//            .anyRequest().authenticated());
 
-    return http.build();
-  }
+        return http.build();
+    }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-  @Bean
-  public JwtAuthenticationConverter authenticationConverter() {
-    JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-    jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-    jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
-    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-    return jwtAuthenticationConverter;
-  }
+    @Bean
+    public JwtAuthenticationConverter authenticationConverter() {
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
+    }
 
-  public SecretKey secretKey() {
-    return new SecretKeySpec(tokenSecret.getBytes(), "HmacSHA256");
-  }
+    public SecretKey secretKey() {
+        return new SecretKeySpec(tokenSecret.getBytes(), "HmacSHA256");
+    }
 
-  @Bean
-  public JwtDecoder jwtDecoder() {
-    return NimbusJwtDecoder.withSecretKey(secretKey()).build();
-  }
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withSecretKey(secretKey())
+                .build();
+    }
 
-  @Bean
-  public JwtEncoder jwtEncoder() {
-    return new NimbusJwtEncoder(new ImmutableSecret<>(secretKey()));
-  }
+    @Bean
+    public JwtEncoder jwtEncoder() {
+        return new NimbusJwtEncoder(new ImmutableSecret<>(secretKey()));
+    }
 
 }
