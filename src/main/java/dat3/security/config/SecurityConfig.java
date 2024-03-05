@@ -77,9 +77,13 @@ public class SecurityConfig {
 
                 // Endpoint permissions
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/info"))
+
                 .permitAll()
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/categories"))
                 .permitAll()
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/categories"))
+                .hasAuthority("ADMIN")
+
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/recipes"))
                 .permitAll()
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/recipes/*"))
