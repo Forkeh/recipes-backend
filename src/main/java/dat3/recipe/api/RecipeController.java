@@ -37,13 +37,13 @@ public class RecipeController {
     }
 
     @PutMapping(path = "/{id}")
-    public RecipeDto addRecipe(@RequestBody RecipeDto request, @PathVariable int id) {
-        return recipeService.editRecipe(request, id);
+    public RecipeDto addRecipe(@RequestBody RecipeDto request, @PathVariable int id, Principal principal) {
+        return recipeService.editRecipe(request, id, principal);
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity deleteRecipe(@PathVariable int id) {
-        return recipeService.deleteRecipe(id);
+    public ResponseEntity deleteRecipe(@PathVariable int id, Principal principal) {
+        return recipeService.deleteRecipe(id, principal);
     }
 
 }

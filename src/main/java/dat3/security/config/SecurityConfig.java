@@ -91,9 +91,9 @@ public class SecurityConfig {
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/recipes"))
                 .hasAuthority("USER")
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.PUT, "/recipes/*"))
-                .hasAuthority("USER")
+                .hasAnyAuthority("USER", "ADMIN")
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.DELETE, "/recipes/*"))
-                .hasAuthority("USER")
+                .hasAnyAuthority("USER", "ADMIN")
 
                 //Required for error responses
                 .requestMatchers(mvcMatcherBuilder.pattern("/error"))
