@@ -76,17 +76,19 @@ public class SecurityConfig {
                 .permitAll()
 
                 // Endpoint permissions
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/info"))
+                .permitAll()
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/categories"))
                 .permitAll()
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/recipes"))
                 .permitAll()
-                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/recipes/{id}"))
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/recipes/*"))
                 .permitAll()
                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/recipes"))
                 .hasAuthority("USER")
-                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.PUT, "/recipes/{id}"))
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.PUT, "/recipes/*"))
                 .hasAuthority("USER")
-                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.DELETE, "/recipes/{id}"))
+                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.DELETE, "/recipes/*"))
                 .hasAuthority("USER")
 
                 //Required for error responses

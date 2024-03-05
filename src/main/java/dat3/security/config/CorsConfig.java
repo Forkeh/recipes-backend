@@ -5,17 +5,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
+
 import java.util.Arrays;
 
 @Configuration
 public class CorsConfig {
 
     //When you know the domain name for your client, add it below before deployment
-    private static final String[] ALLOWED_ORIGINS = new String[] {
-            "*",
+    private static final String[] ALLOWED_ORIGINS = new String[]{
+//            "*",
             "https://example.com/",
-            "http://127.0.0.1:5500"
+            "http://localhost:5173/"
+//            "http://127.0.0.1:5500"
     };
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
