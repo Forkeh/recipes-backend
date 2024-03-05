@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class RecipeDto {
     private Integer id;
     private String name;
+    private String owner;
     private String category;
     private String instructions;
     private String ingredients;
@@ -27,6 +28,7 @@ public class RecipeDto {
     public RecipeDto(Recipe r, boolean includeAll) {
         this.id = r.getId();
         this.name = r.getName();
+        this.owner = r.getOwner();
         this.instructions = r.getInstructions();
         this.ingredients = r.getIngredients();
         this.youTube = r.getYouTube();

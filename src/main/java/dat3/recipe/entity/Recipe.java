@@ -19,6 +19,7 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     private String name;
+    private String owner;
 
     @Column(columnDefinition="TEXT")
     private String instructions;
@@ -29,6 +30,7 @@ public class Recipe {
     private String thumb;
     private String youTube;
     private String source;
+
 
     @CreationTimestamp
     private LocalDateTime created;
