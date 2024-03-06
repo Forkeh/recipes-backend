@@ -1,6 +1,5 @@
 package dat3.recipe.service;
 
-import com.nimbusds.jose.proc.SecurityContext;
 import dat3.recipe.dto.RecipeDto;
 import dat3.recipe.entity.Category;
 import dat3.recipe.entity.Recipe;
@@ -9,8 +8,6 @@ import dat3.recipe.repository.RecipeRepository;
 import dat3.security.entity.UserWithRoles;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import dat3.security.repository.UserWithRolesRepository;
@@ -87,7 +84,7 @@ public class RecipeService {
                         -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found"));
 
         // Check if user is admin or owner of recipe
-        if (!isOwnerOrAdmin(principal, recipeToEdit)) {
+        if (isNotOwnerOrAdmin(principal, recipeToEdit)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not an admin or the owner of the recipe. You cannot edit it.");
         }
 
@@ -105,7 +102,7 @@ public class RecipeService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found"));
 
         // Check if user is admin or owner of recipe
-        if (!isOwnerOrAdmin(principal, recipe)) {
+        if (isNotOwnerOrAdmin(principal, recipe)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not an admin or the owner of the recipe. You cannot delete it.");
         }
 
@@ -113,7 +110,7 @@ public class RecipeService {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    private boolean isOwnerOrAdmin(Principal principal, Recipe recipe) {
+    private boolean isNotOwnerOrAdmin(Principal principal, Recipe recipe) {
         UserWithRoles user = userWithRolesRepository.findById(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
@@ -127,7 +124,7 @@ public class RecipeService {
         boolean isOwner = recipe.getOwner()
                 .equals(user.getUsername());
 
-        return isAdmin || isOwner;
+        return !isAdmin && !isOwner;
     }
 
 
