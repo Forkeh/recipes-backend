@@ -19,7 +19,7 @@ public class SetupDevUsers implements ApplicationRunner {
     PasswordEncoder pwEncoder;
     String passwordUsedByAll;
 
-    public SetupDevUsers(UserWithRolesRepository userWithRolesRepository,RoleRepository roleRepository,PasswordEncoder passwordEncoder) {
+    public SetupDevUsers(UserWithRolesRepository userWithRolesRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userWithRolesRepository = userWithRolesRepository;
         this.roleRepository = roleRepository;
         this.pwEncoder = passwordEncoder;
@@ -29,23 +29,25 @@ public class SetupDevUsers implements ApplicationRunner {
 
     public void run(ApplicationArguments args) {
         setupAllowedRoles();
-        setupUserWithRoleUsers();
+//        setupUserWithRoleUsers();
     }
 
-    private void setupAllowedRoles(){
+    private void setupAllowedRoles() {
         roleRepository.save(new Role("USER"));
         roleRepository.save(new Role("ADMIN"));
     }
 
-     /*****************************************************************************************
+    /*****************************************************************************************
      IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      NEVER  COMMIT/PUSH CODE WITH DEFAULT CREDENTIALS FOR REAL
      iT'S ONE OF THE TOP SECURITY FLAWS YOU CAN DO
      If you see the lines below in log-outputs on Azure, forget whatever had your attention on, AND FIX THIS PROBLEM
      *****************************************************************************************/
     private void setupUserWithRoleUsers() {
-        Role roleUser = roleRepository.findById("USER").orElseThrow(()-> new NoSuchElementException("Role 'user' not found"));
-        Role roleAdmin = roleRepository.findById("ADMIN").orElseThrow(()-> new NoSuchElementException("Role 'admin' not found"));
+        Role roleUser = roleRepository.findById("USER")
+                .orElseThrow(() -> new NoSuchElementException("Role 'user' not found"));
+        Role roleAdmin = roleRepository.findById("ADMIN")
+                .orElseThrow(() -> new NoSuchElementException("Role 'admin' not found"));
         System.out.println("******************************************************************************");
         System.out.println("********** IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ************");
         System.out.println();
