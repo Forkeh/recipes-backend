@@ -29,7 +29,7 @@ public class SetupDevUsers implements ApplicationRunner {
 
     public void run(ApplicationArguments args) {
         setupAllowedRoles();
-        setupUserWithRoleUsers();
+//        setupUserWithRoleUsers();
     }
 
     private void setupAllowedRoles() {
