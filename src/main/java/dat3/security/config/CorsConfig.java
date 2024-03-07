@@ -15,6 +15,7 @@ public class CorsConfig {
     private static final String[] ALLOWED_ORIGINS = new String[]{
 //            "*",
             "https://example.com/",
+            "https://gray-stone-01050eb03.5.azurestaticapps.net/",
             "http://localhost:5173/"
 //            "http://127.0.0.1:5500"
     };
